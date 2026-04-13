@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMBER — Alberta Wildfire AI Assistant</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f1eb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+#app { display: flex; flex-direction: column; height: 680px; width: 100%; max-width: 800px; background: #fff; border: 1px solid #e0dbd0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+#header { padding: 14px 18px; border-bottom: 1px solid #e0dbd0; display: flex; align-items: center; gap: 10px; background: #1a2332; }
+#header-dot { width: 10px; height: 10px; border-radius: 50%; background: #E85D20; flex-shrink: 0; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+#header-text { font-size: 15px; font-weight: 600; color: #fff; }
+#header-model { font-size: 11px; color: #7a96b0; margin-left: 8px; background: #243447; padding: 2px 8px; border-radius: 10px; }
+#header-status { font-size: 11px; margin-left: auto; padding: 3px 10px; border-radius: 10px; font-weight: 500; }
+#header-status.connected { background: #0f6e56; color: #9fe1cb; }
+#header-status.disconnected { background: #71261a; color: #f5c4b3; }
+#header-status.checking { background: #444; color: #aaa; }
+#messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #fafaf8; }
+.msg { max-width: 90%; display: flex; flex-direction: column; gap: 3px; }
+.msg.bot { align-self: flex-start; }
+.msg.user { align-self: flex-end; }
+.bubble { padding: 11px 15px; border-radius: 16px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+.msg.bot .bubble { background: #fff; color: #1a2332; border: 1px solid #e0dbd0; border-bottom-left-radius: 4px; }
+.msg.user .bubble { background: #E85D20; color: #fff; border-bottom-right-radius: 4px; }
+.msg-label { font-size: 11px; color: #999; padding: 0 4px; }
+.msg.user .msg-label { text-align: right; }
+.msg.bot .msg-label { display: flex; align-items: center; gap: 5px; }
+.model-badge { font-size: 10px; background: #e8f4ee; color: #0f6e56; padding: 1px 6px; border-radius: 6px; font-weight: 500; }
+#input-area { padding: 12px 16px; border-top: 1px solid #e0dbd0; display: flex; gap: 8px; align-items: flex-end; background: #fff; }
+#user-input { flex: 1; resize: none; border: 1px solid #ddd; border-radius: 10px; padding: 9px 13px; font-size: 14px; font-family: inherit; color: #1a2332; background: #fafaf8; outline: none; min-height: 40px; max-height: 120px; line-height: 1.45; }
+#user-input:focus { border-color: #E85D20; }
+#user-input:disabled { opacity: 0.5; cursor: not-allowed; }
+#send-btn { width: 38px; height: 38px; border-radius: 50%; background: #E85D20; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; }
+#send-btn:hover { opacity: 0.85; }
+#send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+#send-btn svg { width: 16px; height: 16px; fill: #fff; }
+.typing { display: flex; gap: 5px; align-items: center; padding: 10px 14px; }
+.typing span { width: 7px; height: 7px; border-radius: 50%; background: #bbb; animation: bounce 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-7px)} }
+.error-bubble { background: #fdf0ef; border: 1px solid #f5c4b3; color: #993c1d; font-size: 13px; padding: 10px 14px; border-radius: 10px; margin-top: 4px; }
+.config-panel { background: #fff; border: 1px solid #e0dbd0; border-radius: 12px; padding: 16px; margin: 8px 0; font-size: 13px; }
+.config-title { font-weight: 600; color: #1a2332; margin-bottom: 10px; font-size: 14px; }
+.config-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.config-label { font-size: 12px; color: #666; }
+.config-input { border: 1px solid #ddd; border-radius: 8px; padding: 7px 10px; font-size: 13px; font-family: inherit; color: #1a2332; background: #fafaf8; outline: none; width: 100%; }
+.config-input:focus { border-color: #E85D20; }
+.config-btn { background: #E85D20; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+.config-btn:hover { opacity: 0.85; }
+.quick-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.qbtn { font-size: 12px; padding: 6px 12px; border: 1px solid #ddd; border-radius: 20px; background: #fff; color: #555; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.qbtn:hover { background: #f4f1eb; border-color: #E85D20; color: #E85D20; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div id="header-dot"></div>
+    <div id="header-text">EMBER Wildfire AI Assistant</div>
+    <div id="header-model">llama3.1:8b</div>
+    <div id="header-status" class="checking">Connecting...</div>
+  </div>
+  <div id="messages"></div>
+  <div id="input-area">
+    <textarea id="user-input" rows="1" placeholder="Ask anything about Alberta wildfires, the model, or fire risk..." disabled></textarea>
+    <button id="send-btn" disabled>
+      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const OLLAMA_URL = "YOUR_OLLAMA_URL_HERE";
+const OLLAMA_USER = "YOUR_USERNAME_HERE";
+const OLLAMA_PASS = "YOUR_PASSWORD_HERE";
+const MODEL = "llama3.1:8b";
+
+const SYSTEM_PROMPT = `You are EMBER, an AI assistant specializing in Alberta wildfire risk assessment and prediction. You are built on research using 26,551 wildfire incidents from Alberta's Forest Protection Area (2006-2024).
+
+Key facts about the research:
+- Target variable: Large fire escalation (Class D or E, >40 hectares) — only 3.3% of all fires (n=869)
+- Models trained: Random Forest (AUROC 0.957 ± 0.008), Logistic Regression (AUPRC 0.584 ± 0.041), XGBoost (AUPRC 0.567 ± 0.042), Isolation Forest (AUPRC 0.264, unsupervised)
+- Primary metric: AUPRC (Area Under Precision-Recall Curve) because of severe class imbalance. Random baseline = 0.033
+- All supervised models use 10-fold stratified cross-validation with SMOTE oversampling on training folds only
+- Top SHAP predictors (Random Forest): Size at assessment (0.195), Fire spread rate (0.130), Wind speed (0.050), Lightning ignition (0.048), Forest area (0.030), Temperature (0.028)
+- Key EDA finding: Fire frequency and area burned are nearly uncorrelated (r = -0.11)
+- Fort McMurray and High Level account for 71% of total area burned despite ranking 7th and 2nd in fire frequency
+- 44% of fires detected through unplanned means
+- 2023 season: 2.2 million hectares burned, $851M suppression cost — 3x historical average
+- Detection lag and dispatch lag independently predict escalation
+- SMOTE = Synthetic Minority Oversampling Technique
+- SHAP = SHapley Additive exPlanations
+
+You can also perform risk assessments. When a user describes fire conditions, estimate escalation risk based on the SHAP feature weights above. The most important factors are fire size at assessment and spread rate.
+
+Be conversational, accurate, and helpful. When you do not know something, say so. Keep responses focused and clear. You are talking to researchers, students, and potentially fire managers.`;
+
+const msgs = document.getElementById("messages");
+const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+const statusEl = document.getElementById("header-status");
+let conversationHistory = [];
+let isStreaming = false;
+
+function getAuthHeader() {
+  const credentials = btoa(OLLAMA_USER + ":" + OLLAMA_PASS);
+  return "Basic " + credentials;
+}
+
+function addMsg(role, text, isHTML) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + role;
+  const label = document.createElement("div");
+  label.className = "msg-label";
+  if (role === "bot") {
+    label.innerHTML = `EMBER <span class="model-badge">${MODEL}</span>`;
+  } else {
+    label.textContent = "You";
+  }
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  if (isHTML) bubble.innerHTML = text;
+  else bubble.textContent = text;
+  wrap.appendChild(label);
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+  return bubble;
+}
+
+function addTyping() {
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot"; wrap.id = "typing-ind";
+  const b = document.createElement("div"); b.className = "bubble";
+  b.innerHTML = "<div class=\"typing\"><span></span><span></span><span></span></div>";
+  wrap.appendChild(b); msgs.appendChild(wrap); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { const t = document.getElementById("typing-ind"); if (t) t.remove(); }
+
+function addError(text) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot";
+  const label = document.createElement("div");
+  label.className = "msg-label";
+  label.textContent = "System";
+  const bubble = document.createElement("div");
+  bubble.className = "error-bubble";
+  bubble.textContent = text;
+  wrap.appendChild(label);
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function checkConnection() {
+  statusEl.className = "checking";
+  statusEl.textContent = "Connecting...";
+  try {
+    const res = await fetch(OLLAMA_URL + "/api/tags", {
+      method: "GET",
+      headers: { "Authorization": getAuthHeader() },
+    });
+    if (res.ok) {
+      statusEl.className = "connected";
+      statusEl.textContent = "Connected";
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.placeholder = "Ask anything about Alberta wildfires, the model, or fire risk...";
+      showWelcome();
+    } else {
+      throw new Error("HTTP " + res.status);
+    }
+  } catch (e) {
+    statusEl.className = "disconnected";
+    statusEl.textContent = "Disconnected";
+    showConfigPanel();
+  }
+}
+
+function showConfigPanel() {
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot";
+  const label = document.createElement("div");
+  label.className = "msg-label";
+  label.textContent = "System";
+  const panel = document.createElement("div");
+  panel.className = "config-panel";
+  panel.innerHTML = `
+    <div class="config-title">Configure Ollama Connection</div>
+    <div class="config-row">
+      <div class="config-label">Ollama Server URL</div>
+      <input class="config-input" id="cfg-url" type="text" placeholder="https://your-server.com:11434" value="${OLLAMA_URL !== "YOUR_OLLAMA_URL_HERE" ? OLLAMA_URL : ""}">
+    </div>
+    <div class="config-row">
+      <div class="config-label">Username</div>
+      <input class="config-input" id="cfg-user" type="text" placeholder="username">
+    </div>
+    <div class="config-row">
+      <div class="config-label">Password</div>
+      <input class="config-input" id="cfg-pass" type="password" placeholder="password">
+    </div>
+    <button class="config-btn" onclick="applyConfig()">Connect</button>
+  `;
+  wrap.appendChild(label);
+  wrap.appendChild(panel);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function applyConfig() {
+  const url = document.getElementById("cfg-url").value.trim().replace(/\/$/, "");
+  const user = document.getElementById("cfg-user").value.trim();
+  const pass = document.getElementById("cfg-pass").value.trim();
+  if (!url) { alert("Please enter the server URL"); return; }
+  window._OLLAMA_URL = url;
+  window._OLLAMA_USER = user;
+  window._OLLAMA_PASS = pass;
+  checkConnectionDynamic(url, user, pass);
+}
+
+async function checkConnectionDynamic(url, user, pass) {
+  statusEl.className = "checking";
+  statusEl.textContent = "Connecting...";
+  try {
+    const credentials = btoa(user + ":" + pass);
+    const res = await fetch(url + "/api/tags", {
+      method: "GET",
+      headers: { "Authorization": "Basic " + credentials },
+    });
+    if (res.ok) {
+      statusEl.className = "connected";
+      statusEl.textContent = "Connected";
+      input.disabled = false;
+      sendBtn.disabled = false;
+      showWelcome();
+    } else {
+      throw new Error("HTTP " + res.status);
+    }
+  } catch (e) {
+    statusEl.className = "disconnected";
+    statusEl.textContent = "Failed — check URL and credentials";
+    addError("Could not connect: " + e.message + ". Check the URL and credentials and try again.");
+  }
+}
+
+function showWelcome() {
+  const html = `Hi! I\'m EMBER, your Alberta wildfire AI assistant powered by ${MODEL}.
+
+I\'m trained on research covering 26,551 fires from Alberta\'s Forest Protection Area (2006–2024). I can answer questions about the predictive model, explain wildfire risk factors, assess fire conditions, or discuss the findings.
+<div class="quick-btns" style="margin-top:10px;">
+  <button class="qbtn" onclick="sendQuick(\'What are the top risk factors for large fire escalation?\')">Top risk factors</button>
+  <button class="qbtn" onclick="sendQuick(\'Can you assess a fire with these conditions: 250 ha, spread rate 12 m/min, wind 45 km/h, temp 33C, humidity 18%, lightning ignition, Fort McMurray region?\')">Try a risk assessment</button>
+  <button class="qbtn" onclick="sendQuick(\'What does AUPRC mean and why is it the right metric here?\')">Why AUPRC?</button>
+  <button class="qbtn" onclick="sendQuick(\'How does Isolation Forest work for wildfire prediction?\')">Isolation Forest</button>
+</div>`;
+  addMsg("bot", html, true);
+}
+
+function sendQuick(text) {
+  input.value = text;
+  sendMessage();
+}
+
+async function sendMessage() {
+  const text = input.value.trim();
+  if (!text || isStreaming) return;
+  addMsg("user", text, false);
+  input.value = "";
+  input.style.height = "auto";
+  conversationHistory.push({ role: "user", content: text });
+  isStreaming = true;
+  input.disabled = true;
+  sendBtn.disabled = true;
+  addTyping();
+
+  const activeUrl = window._OLLAMA_URL || OLLAMA_URL;
+  const activeUser = window._OLLAMA_USER || OLLAMA_USER;
+  const activePass = window._OLLAMA_PASS || OLLAMA_PASS;
+  const credentials = btoa(activeUser + ":" + activePass);
+
+  try {
+    const res = await fetch(activeUrl + "/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Basic " + credentials,
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          ...conversationHistory
+        ],
+        stream: true,
+      }),
+    });
+
+    if (!res.ok) throw new Error("HTTP " + res.status + " — " + await res.text());
+
+    removeTyping();
+    const bubble = addMsg("bot", "", false);
+    let fullResponse = "";
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n").filter(l => l.trim());
+      for (const line of lines) {
+        try {
+          const data = JSON.parse(line);
+          if (data.message && data.message.content) {
+            fullResponse += data.message.content;
+            bubble.textContent = fullResponse;
+            msgs.scrollTop = msgs.scrollHeight;
+          }
+        } catch(e) {}
+      }
+    }
+
+    conversationHistory.push({ role: "assistant", content: fullResponse });
+
+  } catch (e) {
+    removeTyping();
+    addError("Error communicating with Ollama: " + e.message);
+  } finally {
+    isStreaming = false;
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+input.addEventListener("input", () => {
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 120) + "px";
+});
+
+checkConnection();
+</script>
+</body>
+</html>
