@@ -1,3 +1,9 @@
 fastapi
 uvicorn
 numpy
+pandas
+matplotlib
+scikit-learn
+sqlalchemy
+ollama
+seaborn
