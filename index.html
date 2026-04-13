@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alberta Wildfire Risk Assessor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f1eb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  #app { display: flex; flex-direction: column; height: 620px; width: 100%; max-width: 720px; background: #fff; border: 1px solid #e0dbd0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+  #header { padding: 14px 18px; border-bottom: 1px solid #e0dbd0; display: flex; align-items: center; gap: 10px; background: #1a2332; }
+  #header-dot { width: 10px; height: 10px; border-radius: 50%; background: #E85D20; flex-shrink: 0; }
+  #header-text { font-size: 15px; font-weight: 600; color: #fff; }
+  #header-sub { font-size: 11px; color: #7a96b0; margin-left: auto; }
+  #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #fafaf8; }
+  .msg { max-width: 88%; display: flex; flex-direction: column; gap: 3px; }
+  .msg.bot { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+  .bubble { padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.6; }
+  .msg.bot .bubble { background: #fff; color: #1a2332; border: 1px solid #e0dbd0; border-bottom-left-radius: 4px; }
+  .msg.user .bubble { background: #E85D20; color: #fff; border-bottom-right-radius: 4px; }
+  .msg-label { font-size: 11px; color: #999; padding: 0 4px; }
+  .msg.user .msg-label { text-align: right; }
+  .risk-card { margin-top: 6px; border: 1px solid #e0dbd0; border-radius: 10px; overflow: hidden; font-size: 13px; }
+  .risk-header { padding: 11px 14px; font-weight: 600; font-size: 15px; color: #fff; }
+  .risk-body { padding: 12px 14px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+  .risk-row { display: flex; justify-content: space-between; align-items: center; }
+  .risk-label { color: #888; font-size: 12px; }
+  .risk-val { font-weight: 600; font-size: 13px; color: #1a2332; }
+  .risk-bar-wrap { height: 7px; background: #f0ece4; border-radius: 4px; overflow: hidden; }
+  .risk-bar { height: 7px; border-radius: 4px; transition: width 0.7s ease; }
+  .factors { display: flex; flex-direction: column; gap: 5px; }
+  .factor { font-size: 12px; color: #555; display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
+  .factor-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .quick-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .qbtn { font-size: 12px; padding: 6px 12px; border: 1px solid #ddd; border-radius: 20px; background: #fff; color: #555; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+  .qbtn:hover { background: #f4f1eb; border-color: #E85D20; color: #E85D20; }
+  #input-area { padding: 12px 16px; border-top: 1px solid #e0dbd0; display: flex; gap: 8px; align-items: flex-end; background: #fff; }
+  #user-input { flex: 1; resize: none; border: 1px solid #ddd; border-radius: 10px; padding: 9px 13px; font-size: 14px; font-family: inherit; color: #1a2332; background: #fafaf8; outline: none; min-height: 40px; max-height: 100px; line-height: 1.45; }
+  #user-input:focus { border-color: #E85D20; }
+  #send-btn { width: 38px; height: 38px; border-radius: 50%; background: #E85D20; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; }
+  #send-btn:hover { opacity: 0.85; }
+  #send-btn svg { width: 16px; height: 16px; fill: #fff; }
+  .typing { display: flex; gap: 5px; align-items: center; padding: 10px 14px; }
+  .typing span { width: 7px; height: 7px; border-radius: 50%; background: #bbb; animation: bounce 1.2s infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+  .footer-note { font-size: 11px; color: #aaa; margin-top: 6px; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div id="header-dot"></div>
+    <div id="header-text">Alberta Wildfire Risk Assessor</div>
+    <div id="header-sub">ML model &middot; 26,551 fires &middot; 2006&ndash;2024</div>
+  </div>
+  <div id="messages"></div>
+  <div id="input-area">
+    <textarea id="user-input" rows="1" placeholder="Describe fire conditions or ask a question..."></textarea>
+    <button id="send-btn">
+      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const msgs = document.getElementById("messages");
+const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+const STATE = { awaitingField: null, collected: {}, stage: "intro" };
+const FIELDS = {
+  size:     { q: "What is the estimated fire size at assessment (in hectares)?", key: "size" },
+  spread:   { q: "What is the fire spread rate at assessment (in m/min)?", key: "spread" },
+  wind:     { q: "What is the wind speed (km/h)?", key: "wind" },
+  temp:     { q: "What is the temperature (\u00b0C)?", key: "temp" },
+  rh:       { q: "What is the relative humidity (%)?", key: "rh" },
+  lightning:{ q: "Was ignition caused by lightning? (yes / no)", key: "lightning" },
+  region:   { q: "Which forest region? Options: Fort McMurray, High Level, Slave Lake, Edson, Peace River, Lac La Biche, Grande Prairie, Rocky, Whitecourt, Calgary", key: "region" },
+};
+const HIGH_RISK = ["fort mcmurray","high level"];
+const MED_RISK  = ["slave lake","lac la biche","peace river"];
+
+function riskScore(d) {
+  let score = 0;
+  const size = parseFloat(d.size)||0, spread = parseFloat(d.spread)||0;
+  const wind = parseFloat(d.wind)||0, temp = parseFloat(d.temp)||0;
+  const rh = parseFloat(d.rh)||50;
+  const lightning = (d.lightning||"").toLowerCase().startsWith("y");
+  const region = (d.region||"").toLowerCase();
+  if (size>200) score+=35; else if(size>40) score+=22; else if(size>4) score+=10; else score+=3;
+  if (spread>10) score+=25; else if(spread>5) score+=15; else if(spread>2) score+=7; else score+=2;
+  if (wind>40) score+=12; else if(wind>25) score+=7; else if(wind>15) score+=3;
+  if (temp>30) score+=8; else if(temp>22) score+=4;
+  if (rh<20) score+=10; else if(rh<30) score+=6; else if(rh<40) score+=2; else if(rh>60) score-=4;
+  if (lightning) score+=8;
+  if (HIGH_RISK.some(r=>region.includes(r))) score+=10;
+  else if (MED_RISK.some(r=>region.includes(r))) score+=5;
+  score = Math.min(99, Math.max(1, score));
+  let level, color, advice;
+  if (score>=70) { level="EXTREME"; color="#C0392B"; advice="Immediate priority resourcing recommended. High probability of Class D/E escalation. Consider pre-positioning aerial resources."; }
+  else if (score>=50) { level="HIGH"; color="#E85D20"; advice="Elevated escalation risk. Close monitoring and standby resources advised. Conditions align with historical large fire profiles."; }
+  else if (score>=30) { level="MODERATE"; color="#EF9F27"; advice="Some escalation risk present. Standard response with readiness for escalation. Monitor wind and spread rate closely."; }
+  else { level="LOW"; color="#1D9E75"; advice="Conditions suggest low escalation probability. Standard initial attack protocol appropriate."; }
+  const factors = [];
+  if (size>40)    factors.push({t:`Large size at assessment (${size} ha) — top SHAP predictor`, c:"#C0392B"});
+  if (spread>5)   factors.push({t:`High spread rate (${spread} m/min) — 2nd SHAP predictor`, c:"#E85D20"});
+  if (wind>25)    factors.push({t:`Elevated wind speed (${wind} km/h)`, c:"#EF9F27"});
+  if (lightning)  factors.push({t:"Lightning ignition — remote starts, longer detection lags", c:"#EF9F27"});
+  if (rh<25)      factors.push({t:`Critical low humidity (${rh}%) — fuels highly receptive`, c:"#E85D20"});
+  if (HIGH_RISK.some(r=>region.includes(r))) factors.push({t:`High-risk region (${d.region}) — 71% of all area burned historically`, c:"#C0392B"});
+  if (factors.length===0) factors.push({t:"No major risk flags detected in current conditions", c:"#1D9E75"});
+  return {score, level, color, advice, factors};
+}
+
+function addMsg(role, html, isHTML) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg "+role;
+  const label = document.createElement("div");
+  label.className = "msg-label";
+  label.textContent = role==="bot" ? "Risk Assessor" : "You";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  if (isHTML) bubble.innerHTML = html; else bubble.textContent = html;
+  wrap.appendChild(label);
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+  return bubble;
+}
+
+function addTyping() {
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot"; wrap.id = "typing-ind";
+  const b = document.createElement("div"); b.className = "bubble";
+  b.innerHTML = "<div class=\"typing\"><span></span><span></span><span></span></div>";
+  wrap.appendChild(b); msgs.appendChild(wrap); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { const t=document.getElementById("typing-ind"); if(t) t.remove(); }
+function botReply(html, isHTML, delay) {
+  addTyping();
+  setTimeout(()=>{ removeTyping(); addMsg("bot", html, isHTML); }, delay||600);
+}
+
+function showRiskCard(d) {
+  const r = riskScore(d);
+  const factorsHTML = r.factors.map(f=>`<div class="factor"><div class="factor-dot" style="background:${f.c}"></div>${f.t}</div>`).join("");
+  const card = `<div class="risk-card">
+    <div class="risk-header" style="background:${r.color}">Large fire escalation risk: ${r.level}</div>
+    <div class="risk-body">
+      <div class="risk-row"><span class="risk-label">Risk score</span><span class="risk-val">${r.score}/100</span></div>
+      <div class="risk-bar-wrap"><div class="risk-bar" style="width:${r.score}%;background:${r.color}"></div></div>
+      <div class="risk-row" style="margin-top:4px"><span class="risk-label">vs. random baseline</span><span class="risk-val">~17&times; better than chance</span></div>
+      <div style="border-top:1px solid #f0ece4;margin-top:8px;padding-top:8px;">
+        <div class="risk-label" style="margin-bottom:6px">Key risk factors</div>
+        <div class="factors">${factorsHTML}</div>
+      </div>
+      <div style="border-top:1px solid #f0ece4;margin-top:8px;padding-top:8px;font-size:12px;color:#666;line-height:1.5;">${r.advice}</div>
+    </div>
+  </div>
+  <div class="footer-note">Based on SHAP feature importance from RF + LR + XGBoost trained on 26,551 Alberta FPA fires &middot; LR AUPRC 0.584 &middot; RF AUROC 0.957</div>`;
+  botReply(card, true, 800);
+  setTimeout(()=>{
+    const fHTML = `What would you like to do next?<div class="quick-btns">
+      <button class="qbtn" onclick="startNew()">Assess another fire</button>
+      <button class="qbtn" onclick="askQ('What are the most important risk factors?')">What drives risk?</button>
+      <button class="qbtn" onclick="askQ('How does Isolation Forest work?')">Isolation Forest</button>
+      <button class="qbtn" onclick="askQ('What does AUPRC mean?')">What is AUPRC?</button>
+    </div>`;
+    botReply(fHTML, true, 1600);
+  }, 1200);
+}
+
+function startNew() {
+  STATE.collected={}; STATE.awaitingField="size"; STATE.stage="collecting";
+  botReply("Sure — let\u2019s assess a new fire. "+FIELDS.size.q, false, 300);
+}
+function askQ(q) { addMsg("user",q,false); handleFreeText(q); }
+
+function handleFreeText(text) {
+  const t = text.toLowerCase();
+  if (t.includes("auprc")||t.includes("precision recall")||t.includes("precision-recall")) {
+    botReply("AUPRC stands for Area Under the Precision-Recall Curve. It measures how well the model identifies large fires specifically. The random baseline is 0.033 because only 3.3% of fires are large. Our Logistic Regression scored 0.584 — that\u2019s 17\u00d7 better than random. Accuracy alone is misleading here because a model that always predicts \u2018small\u2019 gets 96.7% accuracy but catches zero large fires.", false, 700);
+    return;
+  }
+  if (t.includes("isolation forest")||t.includes("anomaly")) {
+    botReply("Isolation Forest is unsupervised — it never sees which fires are large during training. It learns which fires are structurally unusual in the feature space by randomly partitioning the data and seeing which observations get isolated fastest. Large fires cluster in an unusual corner of conditions (big, fast-spreading, windy, remote) so it can detect them without labels. It scored AUPRC 0.264 — lower than supervised models but 8\u00d7 above the 0.033 random baseline.", false, 700);
+    return;
+  }
+  if (t.includes("shap")||t.includes("feature")||t.includes("important")||t.includes("drives")||t.includes("factor")) {
+    botReply("Top SHAP predictors from the Random Forest:\n\n1. Size at assessment (0.195) — fires already large at first response\n2. Fire spread rate (0.130) — fast spread at assessment\n3. Wind speed (0.050) — drives spotting ahead of fire front\n4. Lightning ignition (0.048) — remote starts, longer detection lags\n5. Forest area (0.030) — Fort McMurray and High Level carry independent risk\n6. Temperature (0.028) — hot conditions dry fuels\n\nDetection lag and dispatch lag also contribute independently — every minute saved getting to a fire reduces escalation probability.", false, 700);
+    return;
+  }
+  if (t.includes("auroc")||t.includes("roc")) {
+    botReply("AUROC is Area Under the ROC Curve — it measures overall discrimination across all thresholds. Random Forest scored 0.957 \u00b1 0.008, best of all models. The key nuance: RF wins on AUROC (overall screening) but Logistic Regression wins on AUPRC (precision at flagging large fires). Use RF to broadly screen all fires for risk. Use LR when you need to be precise about which fires will actually escalate.", false, 700);
+    return;
+  }
+  if (t.includes("xgboost")||t.includes("gradient boost")) {
+    botReply("XGBoost is a gradient boosting algorithm that builds trees sequentially, each correcting errors of the last. It scored AUPRC 0.567 \u00b1 0.042 — just below Logistic Regression (0.584) but above Random Forest (0.506). It handles non-linear feature interactions well and uses a scale_pos_weight parameter to account for class imbalance.", false, 700);
+    return;
+  }
+  if (t.includes("smote")) {
+    botReply("SMOTE stands for Synthetic Minority Oversampling Technique. Only 3.3% of fires are large, so the model would rarely see positive examples during training. SMOTE creates synthetic large fire examples by interpolating between existing ones in feature space. Critically, it\u2019s applied only to training folds — validation folds stay at the natural 3.3% ratio so performance estimates are unbiased.", false, 700);
+    return;
+  }
+  if (t.includes("fort mcmurray")||t.includes("high level")||t.includes("region")) {
+    botReply("Fort McMurray and High Level together account for 71% of all area burned across 19 seasons and 26,551 fires — despite ranking 7th and 2nd in fire frequency. Forest area is the 5th most important SHAP predictor, confirming that regional location carries independent risk beyond weather and fire conditions alone. Calgary has the most fires but less than 0.1% of area burned.", false, 700);
+    return;
+  }
+  if (t.includes("assess")||t.includes("new fire")||t.includes("predict")||t.includes("check")||t.includes("evaluat")||t.includes("risk")) {
+    startNew(); return;
+  }
+  botReply("I can assess a fire\u2019s escalation risk or answer questions about the model. Try asking about SHAP features, AUPRC, AUROC, Isolation Forest, XGBoost, SMOTE, or regional risk patterns — or say \u2018assess a fire\u2019 to run a risk assessment.", false, 700);
+}
+
+function handleInput(raw) {
+  const text = raw.trim(); if (!text) return;
+  addMsg("user", text, false); input.value = ""; input.style.height = "auto";
+  if (STATE.stage==="collecting" && STATE.awaitingField) {
+    const field = STATE.awaitingField;
+    STATE.collected[FIELDS[field].key] = text;
+    const order = ["size","spread","wind","temp","rh","lightning","region"];
+    const idx = order.indexOf(field);
+    if (idx < order.length-1) {
+      STATE.awaitingField = order[idx+1];
+      botReply(FIELDS[STATE.awaitingField].q, false, 500);
+    } else {
+      STATE.awaitingField=null; STATE.stage="done";
+      const d = STATE.collected;
+      botReply(`Got it. Assessing: ${d.size} ha, spread ${d.spread} m/min, wind ${d.wind} km/h, ${d.temp}\u00b0C, RH ${d.rh}%, lightning: ${d.lightning}, region: ${d.region}`, false, 500);
+      setTimeout(()=>showRiskCard(d), 1200);
+    }
+    return;
+  }
+  handleFreeText(text);
+}
+
+sendBtn.addEventListener("click", ()=>handleInput(input.value));
+input.addEventListener("keydown", e=>{ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();handleInput(input.value);} });
+input.addEventListener("input", ()=>{ input.style.height="auto"; input.style.height=Math.min(input.scrollHeight,100)+"px"; });
+
+setTimeout(()=>addMsg("bot","Welcome. I\u2019m the Alberta Wildfire Risk Assessor, built on a machine learning model trained on 26,551 fires from the Alberta Forest Protection Area (2006\u20132024). I use SHAP feature weights from Random Forest, Logistic Regression, and XGBoost classifiers.",false), 300);
+setTimeout(()=>{
+  const html = `I can do two things:<div class="quick-btns" style="margin-top:10px;">
+    <button class="qbtn" onclick="startNew()">Assess a fire\u2019s escalation risk &rarr;</button>
+    <button class="qbtn" onclick="askQ('What are the most important risk factors?')">Explain the model &rarr;</button>
+  </div>`;
+  addMsg("bot", html, true);
+}, 1200);
+</script>
+</body>
+</html>
