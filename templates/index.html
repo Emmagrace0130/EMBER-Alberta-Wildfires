@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMBER — Alberta Wildfire Risk Assessor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <!-- ───────────────────── Header ───────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="logo-icon" aria-hidden="true">🔥</span>
+      <div class="header-text">
+        <h1>EMBER</h1>
+        <p class="tagline">Alberta Wildfire Large-Fire Escalation Risk Assessor</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ───────────────────── Main layout ───────────────── -->
+  <main class="layout">
+
+    <!-- LEFT: chat window -->
+    <section class="chat-section" aria-label="Risk assessment conversation">
+      <div class="chat-window" id="chatWindow" role="log" aria-live="polite">
+
+        <!-- Initial system greeting -->
+        <div class="bubble-row system">
+          <div class="avatar system-avatar" aria-hidden="true">🤖</div>
+          <div class="bubble system-bubble">
+            <p>Welcome to <strong>EMBER</strong>, the Alberta wildfire large-fire
+            escalation risk assessor.</p>
+            <p>This tool uses SHAP feature weights derived from
+            <strong>Random Forest</strong>, <strong>Logistic Regression</strong>,
+            <strong>XGBoost</strong>, and <strong>Isolation Forest</strong> models
+            trained on <strong>26,551 wildfire incidents</strong> from Alberta's
+            Forest Protection Area (2006–2024).</p>
+            <p>Enter the fire conditions in the panel to the right and press
+            <em>Assess Risk</em> to receive an escalation risk score with the
+            key driving factors.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT: input form -->
+    <aside class="form-section" aria-label="Fire condition inputs">
+      <h2 class="form-title">Fire Conditions</h2>
+
+      <form id="assessForm" novalidate>
+
+        <div class="field-group">
+          <label for="fireSize">Initial Fire Size <span class="unit">(ha)</span></label>
+          <input
+            type="number" id="fireSize" name="fire_size"
+            min="0.01" max="50000" step="0.01"
+            placeholder="e.g. 2.5"
+            required
+          />
+          <span class="hint">Area at time of first assessment</span>
+        </div>
+
+        <div class="field-group">
+          <label for="spreadRate">Spread Rate</label>
+          <select id="spreadRate" name="spread_rate" required>
+            <option value="" disabled selected>Select spread rate…</option>
+            {% for opt in spread_rate_options %}
+            <option value="{{ opt.value }}">{{ opt.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="windSpeed">Wind Speed <span class="unit">(km/h)</span></label>
+          <input
+            type="number" id="windSpeed" name="wind_speed"
+            min="0" max="200" step="1"
+            placeholder="e.g. 25"
+            required
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="temperature">Air Temperature <span class="unit">(°C)</span></label>
+          <input
+            type="number" id="temperature" name="temperature"
+            min="-30" max="50" step="0.1"
+            placeholder="e.g. 28"
+            required
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="humidity">Relative Humidity <span class="unit">(%)</span></label>
+          <input
+            type="number" id="humidity" name="humidity"
+            min="0" max="100" step="1"
+            placeholder="e.g. 25"
+            required
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="ignitionCause">Ignition Cause</label>
+          <select id="ignitionCause" name="ignition_cause" required>
+            <option value="" disabled selected>Select cause…</option>
+            {% for opt in ignition_cause_options %}
+            <option value="{{ opt.value }}">{{ opt.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="forestRegion">Forest Region</label>
+          <select id="forestRegion" name="forest_region" required>
+            <option value="" disabled selected>Select region…</option>
+            {% for opt in forest_region_options %}
+            <option value="{{ opt.value }}">{{ opt.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn-assess" id="submitBtn">
+          <span class="btn-icon">🔍</span> Assess Risk
+        </button>
+
+      </form>
+
+      <!-- Model performance info -->
+      <details class="model-info">
+        <summary>Model performance</summary>
+        <ul>
+          <li><strong>Random Forest</strong> AUROC: 0.957 ± 0.008</li>
+          <li><strong>Logistic Regression</strong> AUPRC: 0.584 ± 0.041</li>
+          <li><strong>XGBoost</strong> AUPRC: 0.567 ± 0.042</li>
+          <li><strong>Isolation Forest</strong> AUPRC: 0.264 (8× above random baseline)</li>
+        </ul>
+        <p class="source">
+          Data: Alberta Forestry &amp; Parks —
+          <a href="https://open.alberta.ca/opendata/wildfire-data"
+             target="_blank" rel="noopener">Open Government Licence Alberta</a>
+        </p>
+      </details>
+    </aside>
+
+  </main>
+
+  <!-- ───────────────────── Footer ───────────────────── -->
+  <footer class="site-footer">
+    IE 565 · University of Tennessee, Knoxville ·
+    Emma Wilhoit · Dr. Maryam Mofrad (PhD) · Dr. Anahita Khojandi (PhD)
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

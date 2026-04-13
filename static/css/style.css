@@ -1,0 +1,516 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   EMBER — Alberta Wildfire Risk Assessor
+   style.css
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Reset & base ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Brand palette */
+  --ember-bg:         #0e0e10;
+  --ember-surface:    #18181c;
+  --ember-surface2:   #222228;
+  --ember-border:     #2e2e36;
+
+  --ember-orange:     #f97316;
+  --ember-red:        #ef4444;
+  --ember-yellow:     #facc15;
+  --ember-text:       #e5e5e8;
+  --ember-muted:      #8a8a99;
+
+  --risk-low:         #22c55e;
+  --risk-moderate:    #eab308;
+  --risk-high:        #f97316;
+  --risk-extreme:     #ef4444;
+
+  --radius:           10px;
+  --transition:       200ms ease;
+}
+
+html { font-size: 15px; }
+
+body {
+  background: var(--ember-bg);
+  color: var(--ember-text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+
+/* ─── Header ────────────────────────────────────────────────────────────── */
+.site-header {
+  background: var(--ember-surface);
+  border-bottom: 1px solid var(--ember-border);
+  padding: 0.9rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6));
+}
+
+.header-text h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--ember-orange);
+  line-height: 1.1;
+}
+
+.tagline {
+  font-size: 0.78rem;
+  color: var(--ember-muted);
+  letter-spacing: 0.02em;
+}
+
+/* ─── Main two-column layout ────────────────────────────────────────────── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ─── Chat section ──────────────────────────────────────────────────────── */
+.chat-section {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--ember-border);
+  overflow: hidden;
+}
+
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  scroll-behavior: smooth;
+}
+
+/* ─── Chat bubbles ──────────────────────────────────────────────────────── */
+.bubble-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  animation: fadeSlideIn 0.3s ease both;
+}
+
+.bubble-row.user { flex-direction: row-reverse; }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.system-avatar { background: var(--ember-surface2); }
+.user-avatar   { background: rgba(249, 115, 22, 0.15); }
+
+.bubble {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.system-bubble {
+  background: var(--ember-surface);
+  border: 1px solid var(--ember-border);
+  border-top-left-radius: 2px;
+}
+
+.system-bubble p + p { margin-top: 0.45rem; }
+
+.user-bubble {
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  border-top-right-radius: 2px;
+}
+
+/* ─── Risk result card (inside a system bubble) ─────────────────────────── */
+.result-card {
+  margin-top: 0.5rem;
+}
+
+.risk-score-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.risk-gauge-wrap {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+}
+
+.risk-gauge-wrap svg { width: 100%; height: 100%; }
+
+.gauge-bg {
+  fill: none;
+  stroke: var(--ember-surface2);
+  stroke-width: 9;
+}
+
+.gauge-arc {
+  fill: none;
+  stroke-width: 9;
+  stroke-linecap: round;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 1s ease, stroke 0.4s ease;
+}
+
+.gauge-pct-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.risk-level-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge-LOW      { background: rgba(34,197,94,.15);  color: var(--risk-low);      border: 1px solid rgba(34,197,94,.3);  }
+.badge-MODERATE { background: rgba(234,179,8,.15);  color: var(--risk-moderate); border: 1px solid rgba(234,179,8,.3);  }
+.badge-HIGH     { background: rgba(249,115,22,.15); color: var(--risk-high);     border: 1px solid rgba(249,115,22,.3); }
+.badge-EXTREME  { background: rgba(239,68,68,.15);  color: var(--risk-extreme);  border: 1px solid rgba(239,68,68,.3);  }
+
+.risk-label-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.risk-sublabel {
+  font-size: 0.78rem;
+  color: var(--ember-muted);
+  margin-top: 0.15rem;
+}
+
+/* ─── SHAP factor bars ───────────────────────────────────────────────────── */
+.factors-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ember-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0.8rem 0 0.5rem;
+}
+
+.factor-item {
+  margin-bottom: 0.55rem;
+}
+
+.factor-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 0.18rem;
+}
+
+.factor-name { color: var(--ember-text); }
+.factor-pct  { color: var(--ember-muted); font-variant-numeric: tabular-nums; }
+
+.factor-bar-bg {
+  background: var(--ember-surface2);
+  border-radius: 999px;
+  height: 5px;
+  overflow: hidden;
+}
+
+.factor-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--ember-orange), var(--ember-red));
+  transition: width 0.8s ease;
+}
+
+.reassess-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+  padding: 0.45rem 1rem;
+  background: transparent;
+  border: 1px solid var(--ember-orange);
+  color: var(--ember-orange);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background var(--transition), color var(--transition);
+}
+
+.reassess-btn:hover {
+  background: var(--ember-orange);
+  color: #fff;
+}
+
+/* ─── Thinking indicator ─────────────────────────────────────────────────── */
+.thinking {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 0.5rem 0.2rem;
+}
+
+.thinking span {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ember-muted);
+  animation: blink 1.2s infinite ease;
+}
+
+.thinking span:nth-child(2) { animation-delay: 0.2s; }
+.thinking span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50%       { opacity: 1;   transform: scale(1.1);  }
+}
+
+/* ─── Form section ──────────────────────────────────────────────────────── */
+.form-section {
+  background: var(--ember-surface);
+  padding: 1.25rem 1.1rem 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.form-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ember-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--ember-border);
+  padding-bottom: 0.5rem;
+}
+
+/* ─── Form fields ────────────────────────────────────────────────────────── */
+.field-group {
+  margin-bottom: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ember-text);
+  letter-spacing: 0.02em;
+}
+
+.unit {
+  font-weight: 400;
+  color: var(--ember-muted);
+}
+
+.hint {
+  font-size: 0.72rem;
+  color: var(--ember-muted);
+}
+
+.field-group input,
+.field-group select {
+  background: var(--ember-surface2);
+  border: 1px solid var(--ember-border);
+  border-radius: 6px;
+  color: var(--ember-text);
+  font-size: 0.86rem;
+  padding: 0.48rem 0.65rem;
+  width: 100%;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.field-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8a99' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  padding-right: 2rem;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+  outline: none;
+  border-color: var(--ember-orange);
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+}
+
+.field-group input.invalid,
+.field-group select.invalid {
+  border-color: var(--ember-red);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* ─── Assess button ──────────────────────────────────────────────────────── */
+.btn-assess {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem;
+  margin-top: 0.4rem;
+  background: var(--ember-orange);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  letter-spacing: 0.03em;
+}
+
+.btn-assess:hover  { background: #ea6a0d; }
+.btn-assess:active { transform: scale(0.98); }
+.btn-assess:disabled {
+  background: var(--ember-surface2);
+  color: var(--ember-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-icon { font-size: 1rem; }
+
+/* ─── Model info accordion ───────────────────────────────────────────────── */
+.model-info {
+  margin-top: 1.2rem;
+  border: 1px solid var(--ember-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.model-info summary {
+  padding: 0.55rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ember-muted);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.model-info summary::before { content: "▶"; font-size: 0.65rem; }
+.model-info[open] summary::before { content: "▼"; }
+
+.model-info ul, .model-info p {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.78rem;
+  color: var(--ember-muted);
+  background: var(--ember-surface2);
+}
+
+.model-info ul {
+  list-style: none;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.model-info ul li strong { color: var(--ember-text); }
+
+.source {
+  border-top: 1px solid var(--ember-border);
+  padding-top: 0.5rem !important;
+  margin-top: 0 !important;
+}
+
+.source a { color: var(--ember-orange); text-decoration: none; }
+.source a:hover { text-decoration: underline; }
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+.site-footer {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--ember-muted);
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--ember-border);
+  background: var(--ember-surface);
+  flex-shrink: 0;
+}
+
+/* ─── Scrollbar styling ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--ember-bg); }
+::-webkit-scrollbar-thumb { background: var(--ember-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ember-muted); }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow: auto;
+  }
+
+  .chat-section {
+    border-right: none;
+    border-bottom: 1px solid var(--ember-border);
+    min-height: 280px;
+  }
+
+  .form-section { overflow: visible; }
+
+  body { overflow: auto; }
+}
