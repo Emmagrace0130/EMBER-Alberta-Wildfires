@@ -1,0 +1,8 @@
+model,error,dim,time_s,MRR,P@1,R@1,P@3,R@3,P@5,R@5,P@10,R@10
+nomic-embed-text:latest,400 Client Error: Bad Request for url: http://localhost:11434/api/embed,,,,,,,,,,,
+mxbai-embed-large:latest,400 Client Error: Bad Request for url: http://localhost:11434/api/embed,,,,,,,,,,,
+bge-large:latest,400 Client Error: Bad Request for url: http://localhost:11434/api/embed,,,,,,,,,,,
+snowflake-arctic-embed:latest,400 Client Error: Bad Request for url: http://localhost:11434/api/embed,,,,,,,,,,,
+snowflake-arctic-embed2:latest,,1024.0,8.4,0.8702671957671957,0.7933333333333333,0.7933333333333333,0.31555555555555553,0.9466666666666667,0.19333333333333327,0.9666666666666667,0.09866666666666665,0.9866666666666667
+granite-embedding:latest,400 Client Error: Bad Request for url: http://localhost:11434/api/embed,,,,,,,,,,,
+embeddinggemma:latest,,768.0,10.3,0.9307407407407405,0.88,0.88,0.32888888888888884,0.9866666666666667,0.1973333333333333,0.9866666666666667,0.09999999999999998,1.0

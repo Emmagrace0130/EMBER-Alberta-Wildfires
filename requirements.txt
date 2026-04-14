@@ -7,3 +7,14 @@ scikit-learn
 sqlalchemy
 ollama
 seaborn
+shap
+imbalanced-learn
+xgboost
+joblib
+pytest
+openpyxl
+chromadb
+neo4j
+pypdf
+python-dotenv
+tqdm
