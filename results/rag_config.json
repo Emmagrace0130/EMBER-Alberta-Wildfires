@@ -1,0 +1,66 @@
+{
+  "best_embedding_model": "embeddinggemma:latest",
+  "embedding_dim": 768,
+  "ollama_local_url": "http://localhost:11434",
+  "vector_store_path": "vector_store",
+  "chroma_collection": "wildfire_docs",
+  "total_chunks": 542,
+  "pdf_files": [
+    "7032001-2013-11-firesmart-guidebook-community-protection-guidebook-wildland-urban.pdf",
+    "CWFIS_DataServices_HowtoAccessDailyMaps&DataLayers.pdf",
+    "af-farm-and-acreage-guide-to-reducing-wildfire-risk-2020-08-25.pdf",
+    "alberta-wildland-urban-interface-fires.pdf",
+    "p-310-09-ho1-prevention-plan-template.pdf",
+    "rmrs_gtr292.pdf"
+  ],
+  "grid_search_summary": [
+    {
+      "model": "nomic-embed-text:latest",
+      "error": "400 Client Error: Bad Request for url: http://localhost:11434/api/embed"
+    },
+    {
+      "model": "mxbai-embed-large:latest",
+      "error": "400 Client Error: Bad Request for url: http://localhost:11434/api/embed"
+    },
+    {
+      "model": "bge-large:latest",
+      "error": "400 Client Error: Bad Request for url: http://localhost:11434/api/embed"
+    },
+    {
+      "model": "snowflake-arctic-embed:latest",
+      "error": "400 Client Error: Bad Request for url: http://localhost:11434/api/embed"
+    },
+    {
+      "model": "snowflake-arctic-embed2:latest",
+      "dim": 1024,
+      "time_s": 8.4,
+      "MRR": 0.8702671957671957,
+      "P@1": 0.7933333333333333,
+      "R@1": 0.7933333333333333,
+      "P@3": 0.31555555555555553,
+      "R@3": 0.9466666666666667,
+      "P@5": 0.19333333333333327,
+      "R@5": 0.9666666666666667,
+      "P@10": 0.09866666666666665,
+      "R@10": 0.9866666666666667
+    },
+    {
+      "model": "granite-embedding:latest",
+      "error": "400 Client Error: Bad Request for url: http://localhost:11434/api/embed"
+    },
+    {
+      "model": "embeddinggemma:latest",
+      "dim": 768,
+      "time_s": 10.3,
+      "MRR": 0.9307407407407405,
+      "P@1": 0.88,
+      "R@1": 0.88,
+      "P@3": 0.32888888888888884,
+      "R@3": 0.9866666666666667,
+      "P@5": 0.1973333333333333,
+      "R@5": 0.9866666666666667,
+      "P@10": 0.09999999999999998,
+      "R@10": 1.0
+    }
+  ]
+}
