@@ -19,4 +19,5 @@ neo4j
 pypdf
 pdfminer.six
 python-dotenv
+pypiwin32
 tqdm
