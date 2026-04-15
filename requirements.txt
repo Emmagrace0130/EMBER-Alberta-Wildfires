@@ -17,5 +17,6 @@ chromadb
 cryptography>=3.1
 neo4j
 pypdf
+pdfminer.six
 python-dotenv
 tqdm
