@@ -1,0 +1,74 @@
+{
+  "totalFires": 26551,
+  "yearsSpanned": "2006-2024",
+  "largeFireRate": 3.27,
+  "largeFireCount": 869,
+  "recall": 0.91,
+  "precision": 0.42,
+  "featureImportance": [
+    { "rank": 1, "feature": "Assessment hectares", "importance": 0.4232, "direction": "Larger size at assessment = higher escalation risk" },
+    { "rank": 2, "feature": "Fire spread rate", "importance": 0.2353, "direction": "Faster spread = higher escalation risk" },
+    { "rank": 3, "feature": "Wind speed", "importance": 0.0629, "direction": "Windier conditions amplify risk" },
+    { "rank": 4, "feature": "Lightning ignition", "importance": 0.0562, "direction": "Lightning-caused fires start remotely and grow longer before detection" },
+    { "rank": 5, "feature": "Temperature", "importance": 0.0493, "direction": "Hotter conditions amplify risk" },
+    { "rank": 6, "feature": "Forest area", "importance": 0.0388, "direction": "Risk varies by management zone" },
+    { "rank": 7, "feature": "Fire type", "importance": 0.0365, "direction": "Crown fires escalate more than surface fires" },
+    { "rank": 8, "feature": "Dispatch lag", "importance": 0.0248, "direction": "Longer dispatch lag = higher escalation risk" },
+    { "rank": 9, "feature": "Fuel type", "importance": 0.0235, "direction": "Risk varies by fuel classification" },
+    { "rank": 10, "feature": "Relative humidity", "importance": 0.0227, "direction": "Drier air = higher escalation risk" },
+    { "rank": 11, "feature": "Month of ignition", "importance": 0.0146, "direction": "July-August are highest risk months" },
+    { "rank": 12, "feature": "Detection lag", "importance": 0.0122, "direction": "Longer detection lag = higher escalation risk" }
+  ],
+  "causeBreakdown": [
+    { "cause": "Lightning", "count": 9292, "percent": 35.0 },
+    { "cause": "Recreation", "count": 5730, "percent": 21.6 },
+    { "cause": "Resident", "count": 4442, "percent": 16.7 },
+    { "cause": "Incendiary", "count": 2310, "percent": 8.7 },
+    { "cause": "Power Line / Industry", "count": 1429, "percent": 5.4 },
+    { "cause": "Undetermined", "count": 954, "percent": 3.6 },
+    { "cause": "Agriculture Industry", "count": 653, "percent": 2.5 },
+    { "cause": "Forest Industry", "count": 491, "percent": 1.8 },
+    { "cause": "Oil & Gas Industry", "count": 467, "percent": 1.8 },
+    { "cause": "Other / Government / Railroad / Other", "count": 845, "percent": 3.2 }
+  ],
+  "sizeClassBreakdown": [
+    { "sizeClass": "A", "label": "0 - 0.1 ha", "count": 17503, "percent": 65.9 },
+    { "sizeClass": "B", "label": "0.1 - 4 ha", "count": 6898, "percent": 26.0 },
+    { "sizeClass": "C", "label": "4 - 40 ha", "count": 1281, "percent": 4.8 },
+    { "sizeClass": "D", "label": "40 - 200 ha", "count": 384, "percent": 1.4 },
+    { "sizeClass": "E", "label": "200+ ha", "count": 485, "percent": 1.8 }
+  ],
+  "annualTrend": [
+    { "year": 2006, "fireCount": 1954 },
+    { "year": 2007, "fireCount": 1348 },
+    { "year": 2008, "fireCount": 1712 },
+    { "year": 2009, "fireCount": 1710 },
+    { "year": 2010, "fireCount": 1840 },
+    { "year": 2011, "fireCount": 1218 },
+    { "year": 2012, "fireCount": 1568 },
+    { "year": 2013, "fireCount": 1226 },
+    { "year": 2014, "fireCount": 1470 },
+    { "year": 2015, "fireCount": 1898 },
+    { "year": 2016, "fireCount": 1376 },
+    { "year": 2017, "fireCount": 1244 },
+    { "year": 2018, "fireCount": 1279 },
+    { "year": 2019, "fireCount": 1005 },
+    { "year": 2020, "fireCount": 723 },
+    { "year": 2021, "fireCount": 1342 },
+    { "year": 2022, "fireCount": 1276 },
+    { "year": 2023, "fireCount": 1132 },
+    { "year": 2024, "fireCount": 1230 }
+  ],
+  "modelMetrics": [
+    { "model": "Logistic Regression", "auprc": 0.584, "auroc": 0.950, "notes": "Best by primary metric (AUPRC); preferred for production" },
+    { "model": "Random Forest", "auprc": 0.513, "auroc": 0.959, "notes": "Kept for SHAP interpretability" }
+  ],
+  "charts": [
+    "fig_annual_trends.png",
+    "fig_model_comparison.png",
+    "fig_prc_curves.png",
+    "fig_roc_curves.png",
+    "fig_shap.png",
+    "fig_size_distribution.png"
+  ]
+}
