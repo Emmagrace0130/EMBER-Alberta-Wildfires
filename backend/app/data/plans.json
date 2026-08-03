@@ -1,0 +1,80 @@
+[
+  {
+    "id": "firesmart-guidebook",
+    "title": "FireSmart Community Protection Guidebook",
+    "source": "FireSmart Canada / Alberta Agriculture and Forestry, 2013",
+    "summary": "The core community-level mitigation reference: defensible space planning, structural hardening (roofing, siding, vents, decks), vegetation management zones around homes, and a checklist-driven process for organizing a community-wide FireSmart program in the Wildland-Urban Interface.",
+    "categories": ["Defensible Space", "Community Planning", "Fuel Management"],
+    "hazardLevel": "High",
+    "region": "Province-wide (WUI communities)",
+    "jurisdiction": "Alberta",
+    "chunkCount": 411,
+    "fileName": "7032001-2013-11-firesmart-guidebook-community-protection-guidebook-wildland-urban.pdf",
+    "fileSizeMb": 8.3
+  },
+  {
+    "id": "farm-acreage-guide",
+    "title": "Farm & Acreage Guide to Reducing Wildfire Risk",
+    "source": "Alberta Agriculture and Forestry, 2020",
+    "summary": "Mitigation guidance tailored to rural properties: farmstead and acreage risk assessment, fuel management around outbuildings and equipment yards, livestock and machinery positioning during fire season, and rural water-source planning.",
+    "categories": ["Defensible Space", "Resource Allocation", "Fuel Management"],
+    "hazardLevel": "Moderate",
+    "region": "Rural / agricultural areas",
+    "jurisdiction": "Alberta",
+    "chunkCount": 0,
+    "fileName": "af-farm-and-acreage-guide-to-reducing-wildfire-risk-2020-08-25.pdf",
+    "fileSizeMb": 4.9
+  },
+  {
+    "id": "alberta-wui-fires",
+    "title": "Alberta Wildland-Urban Interface Fires Analysis",
+    "source": "Alberta wildfire research synthesis",
+    "summary": "An analysis of fire behavior and outcomes specifically in Wildland-Urban Interface zones across Alberta — how geography, fuel continuity, and community layout shape hazard, with implications for where mitigation investment matters most.",
+    "categories": ["Community Planning", "Monitoring"],
+    "hazardLevel": "High",
+    "region": "WUI zones, province-wide",
+    "jurisdiction": "Alberta",
+    "chunkCount": 22,
+    "fileName": "alberta-wildland-urban-interface-fires.pdf",
+    "fileSizeMb": 4.4
+  },
+  {
+    "id": "cwfis-data-services",
+    "title": "CWFIS Data Services — Accessing Daily Maps & Data Layers",
+    "source": "Canadian Wildland Fire Information System (Natural Resources Canada)",
+    "summary": "Operational guide for pulling daily fire weather maps, hazard layers, and near-real-time fire information from the national CWFIS data service — the monitoring backbone that mitigation and response planning draws on.",
+    "categories": ["Monitoring"],
+    "hazardLevel": "Informational",
+    "region": "National (Canada-wide)",
+    "jurisdiction": "Canada",
+    "chunkCount": 4,
+    "fileName": "CWFIS_DataServices_HowtoAccessDailyMaps&DataLayers.pdf",
+    "fileSizeMb": 0.23
+  },
+  {
+    "id": "prevention-plan-template",
+    "title": "Wildfire Prevention, Education & Mitigation Planning Guide",
+    "source": "US Bureau of Land Management (BLM), 2009",
+    "summary": "A structured planning template for developing wildfire prevention programs: community risk assessment frameworks, public education campaign design, enforcement and mitigation action planning, and performance metrics for tracking prevention program effectiveness.",
+    "categories": ["Community Planning", "Prescribed Fire", "Fuel Management"],
+    "hazardLevel": "Moderate",
+    "region": "Western United States",
+    "jurisdiction": "United States",
+    "chunkCount": 7,
+    "fileName": "p-310-09-ho1-prevention-plan-template.pdf",
+    "fileSizeMb": 0.09
+  },
+  {
+    "id": "usfs-rmrs-gtr292",
+    "title": "Wildfire Risk Assessment Methodology (USFS RMRS-GTR-292)",
+    "source": "US Forest Service, Rocky Mountain Research Station",
+    "summary": "A research-backed technical report on quantifying wildfire hazard and prioritizing mitigation investment — the methodological foundation behind how EMBER's risk scoring and feature-importance analysis is framed.",
+    "categories": ["Monitoring", "Resource Allocation"],
+    "hazardLevel": "Reference",
+    "region": "Western United States",
+    "jurisdiction": "United States",
+    "chunkCount": 66,
+    "fileName": "rmrs_gtr292.pdf",
+    "fileSizeMb": 36.2
+  }
+]

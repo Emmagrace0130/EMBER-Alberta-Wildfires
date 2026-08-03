@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "127.0.0.1:8050:8000"
+    environment:
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:5181}
+      - DOCUMENTS_DIR=/app/data_docs
+      - CONTACT_DB_PATH=/app/storage/contact.db
+    volumes:
+      - ./backend/app:/app/app
+      - ./docs/data_docs:/app/data_docs:ro
+      - ember_contact_storage:/app/storage
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "127.0.0.1:5181:5173"
+    environment:
+      - VITE_PROXY_TARGET=http://backend:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  ember_contact_storage:
