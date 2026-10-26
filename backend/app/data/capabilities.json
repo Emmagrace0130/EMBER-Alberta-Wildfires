@@ -1,0 +1,65 @@
+[
+  {
+    "id": "mitigation-recommendations",
+    "title": "Mitigation Recommendations",
+    "description": "Surfaces concrete mitigation actions — fuel treatment, defensible space, structural hardening — drawn from authoritative wildfire protection documents.",
+    "category": "Planning",
+    "status": "Available"
+  },
+  {
+    "id": "document-hub",
+    "title": "Wildfire Planning Document Hub",
+    "description": "Organizes and indexes mitigation guidebooks, prevention templates, and research reports so communities and planners can find what applies to them.",
+    "category": "Resources",
+    "status": "Available"
+  },
+  {
+    "id": "risk-pattern-explainer",
+    "title": "Plain-Language Risk Patterns",
+    "description": "Translates Alberta wildfire statistics — causes, seasonal trends, size distributions — into clear explanations for non-technical audiences.",
+    "category": "Insights",
+    "status": "Available"
+  },
+  {
+    "id": "preparedness-education",
+    "title": "Community Preparedness Education",
+    "description": "Plain-language content connecting data-driven risk factors (wind, drought, ignition cause) to preparedness actions communities can take before fire season.",
+    "category": "Education",
+    "status": "Available"
+  },
+  {
+    "id": "region-insights",
+    "title": "Region-Specific Insights",
+    "description": "Breaks down fire history and risk factors by Alberta forest area, so planning reflects local conditions rather than province-wide averages.",
+    "category": "Insights",
+    "status": "Available"
+  },
+  {
+    "id": "knowledge-hub",
+    "title": "Mitigation Knowledge Hub",
+    "description": "A searchable library tying together planning documents, dataset findings, and methodology notes in one place.",
+    "category": "Resources",
+    "status": "Available"
+  },
+  {
+    "id": "fire-risk-prediction",
+    "title": "AI-Assisted Fire Risk Prediction",
+    "description": "A trained ensemble (Logistic Regression + Random Forest) that estimates large-fire escalation probability from fire and weather conditions — currently in research validation.",
+    "category": "AI & Modeling",
+    "status": "Coming soon"
+  },
+  {
+    "id": "rag-assistant",
+    "title": "RAG-Powered Mitigation Assistant",
+    "description": "A retrieval-augmented assistant that answers mitigation questions by grounding responses in the document library and knowledge graph — in development.",
+    "category": "AI & Modeling",
+    "status": "Coming soon"
+  },
+  {
+    "id": "weather-map-integration",
+    "title": "Weather & Map Integration",
+    "description": "Planned integration with live weather feeds and geospatial overlays to connect current conditions to localized risk.",
+    "category": "AI & Modeling",
+    "status": "Planned"
+  }
+]

@@ -1,0 +1,43 @@
+services:
+  backend:
+    container_name: ember-backend
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      - CORS_ORIGINS=https://ember.rubyrecon.com
+      - DOCUMENTS_DIR=/app/data_docs
+      - CONTACT_DB_PATH=/app/storage/contact.db
+      - VECTOR_STORE_DIR=/app/vector_store
+      - OLLAMA_URL=http://host.docker.internal:11434
+    volumes:
+      - ./docs/data_docs:/app/data_docs:ro
+      - ./vector_store:/app/vector_store
+      - ember_contact_storage:/app/storage
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - viridian_network
+
+  frontend:
+    container_name: ember-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend.prod
+    environment:
+      - VIRTUAL_HOST=ember.rubyrecon.com
+      - LETSENCRYPT_HOST=ember.rubyrecon.com
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - viridian_network
+
+volumes:
+  ember_contact_storage:
+
+networks:
+  viridian_network:
+    external: true

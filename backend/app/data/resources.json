@@ -1,0 +1,58 @@
+[
+  {
+    "id": "firesmart-guidebook",
+    "title": "FireSmart Community Protection Guidebook",
+    "type": "PDF Guide",
+    "description": "Defensible space, structural hardening, and community organizing guidance for Wildland-Urban Interface protection.",
+    "fileName": "7032001-2013-11-firesmart-guidebook-community-protection-guidebook-wildland-urban.pdf"
+  },
+  {
+    "id": "farm-acreage-guide",
+    "title": "Farm & Acreage Guide to Reducing Wildfire Risk",
+    "type": "PDF Guide",
+    "description": "Wildfire risk reduction guidance specific to farms, acreages, and rural properties.",
+    "fileName": "af-farm-and-acreage-guide-to-reducing-wildfire-risk-2020-08-25.pdf"
+  },
+  {
+    "id": "alberta-wui-fires",
+    "title": "Alberta Wildland-Urban Interface Fires Analysis",
+    "type": "Research Report",
+    "description": "Analysis of fire behavior and outcomes in Alberta's Wildland-Urban Interface zones.",
+    "fileName": "alberta-wildland-urban-interface-fires.pdf"
+  },
+  {
+    "id": "cwfis-data-services",
+    "title": "CWFIS Data Services Guide",
+    "type": "Technical Guide",
+    "description": "How to access daily fire weather maps and data layers from the Canadian Wildland Fire Information System.",
+    "fileName": "CWFIS_DataServices_HowtoAccessDailyMaps&DataLayers.pdf"
+  },
+  {
+    "id": "prevention-plan-template",
+    "title": "Wildfire Prevention Plan Template",
+    "type": "Template",
+    "description": "A ready-to-adapt template for building a formal community or operator wildfire prevention plan.",
+    "fileName": "p-310-09-ho1-prevention-plan-template.pdf"
+  },
+  {
+    "id": "usfs-rmrs-gtr292",
+    "title": "Wildfire Risk Assessment Methodology (USFS RMRS-GTR-292)",
+    "type": "Research Report",
+    "description": "Technical foundation for quantifying wildfire hazard and prioritizing mitigation investment.",
+    "fileName": "rmrs_gtr292.pdf"
+  },
+  {
+    "id": "executive-summary",
+    "title": "EMBER Executive Summary",
+    "type": "Findings Summary",
+    "description": "Overview of the Alberta wildfire dataset, model results, and key findings behind EMBER's risk analysis.",
+    "externalNote": "Derived from internal research notes (docs/findings/01_executive_summary.md)."
+  },
+  {
+    "id": "feature-importance-findings",
+    "title": "Feature Importance & SHAP Analysis",
+    "type": "Findings Summary",
+    "description": "Ranked breakdown of which fire and weather conditions most strongly predict large-fire escalation.",
+    "externalNote": "Derived from internal research notes (docs/findings/04_feature_importance.md)."
+  }
+]

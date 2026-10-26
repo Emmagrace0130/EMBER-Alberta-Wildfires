@@ -181,14 +181,37 @@ def main():
         print("\nSHAP skipped (--no-shap).")
 
     # ------------------------------------------------------------------
-    # 11. Save model
+    # 11. Save models + scaler
     # ------------------------------------------------------------------
     print("\n" + "=" * 60)
-    print("STEP 10 — Saving model")
+    print("STEP 10 — Saving models and scaler")
     print("=" * 60)
+
+    # Random Forest (final)
     model_path = out("wildfire_model.pkl")
     joblib.dump(rf_final, model_path)
-    print(f"Model saved: {model_path}")
+    print(f"Random Forest saved : {model_path}")
+
+    # Scaler (MUST be saved alongside model for inference)
+    scaler_path = out("scaler.pkl")
+    joblib.dump(scaler_final, scaler_path)
+    print(f"Scaler saved        : {scaler_path}")
+
+    # Logistic Regression (best AUPRC in CV — train on same scaled + SMOTE data)
+    from sklearn.linear_model import LogisticRegression
+    from imblearn.over_sampling import SMOTE as _SMOTE
+
+    X_scaled_lr = scaler_final.transform(X)
+    smote_lr = _SMOTE(random_state=42, k_neighbors=min(5, max(1, int(y.sum()) - 1)))
+    try:
+        X_res_lr, y_res_lr = smote_lr.fit_resample(X_scaled_lr, y)
+    except Exception:
+        X_res_lr, y_res_lr = X_scaled_lr, y
+    lr_final = LogisticRegression(max_iter=1000, class_weight="balanced", random_state=42)
+    lr_final.fit(X_res_lr, y_res_lr)
+    lr_path = out("lr_model.pkl")
+    joblib.dump(lr_final, lr_path)
+    print(f"Logistic Regression : {lr_path}")
 
     print("\n✓ Pipeline complete. Outputs written to:", os.path.abspath(args.output_dir))
 

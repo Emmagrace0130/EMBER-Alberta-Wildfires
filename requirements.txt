@@ -14,7 +14,10 @@ joblib
 pytest
 openpyxl
 chromadb
+cryptography>=3.1
 neo4j
 pypdf
+pdfminer.six
 python-dotenv
+pypiwin32
 tqdm
